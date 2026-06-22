@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore | Tu Tienda de Hardware de Alto Rendimiento</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body>
+
+<header>
+    <div class="nav-left">
+        <div class="logo">TechStore</div>
+        <nav>
+            <a href="#" class="active">Tienda</a>
+            <a href="#">Nosotros</a>
+            <a href="#">Contactos</a>
+        </nav>
+    </div>
+    <div class="nav-right">
+        <div class="search-container">
+            <span class="material-symbols-outlined search-icon">search</span>
+            <input type="text" placeholder="Buscar componentes...">
+        </div>
+        <a href="/carrito" class="cart-icon" style="color: inherit; text-decoration: none;" title="Ver mi carrito">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span class="cart-count" id="cart-count">0</span>
+        </a>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <span class="hero-tag">Novedades de la semana</span>
+        <h1>Arma o compra tu PC ideal</h1>
+        <p>Explora lo último en procesadores, tarjetas gráficas de última generación y periféricos diseñados para la victoria absoluta.</p>
+        <div class="hero-btns">
+            <a href="#" class="btn-primary">Comprar Ahora <span class="material-symbols-outlined">arrow_right_alt</span></a>
+            <a href="#" class="btn-secondary">Configurar PC</a>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="section-header">
+        <div>
+            <h2>Categorías Destacadas</h2>
+            <p>Explora nuestro catálogo especializado por componentes.</p>
+        </div>
+        <a href="#" class="view-all">Ver todas las categorías <span class="material-symbols-outlined">chevron_right</span></a>
+    </div>
+
+    <div class="categories-grid">
+        <div class="category-card cat-gpu">
+            <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=600" alt="GPUs">
+            <div class="category-card-info">
+                <h3>Tarjetas de Video</h3>
+                <p>Serie RTX 40 y RX 7000 para gaming extremo.</p>
+            </div>
+        </div>
+        <div class="category-card cat-cpu">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600" alt="CPUs">
+            <div class="category-card-info">
+                <h3>Procesadores</h3>
+                <p>El núcleo de tu poder.</p>
+            </div>
+        </div>
+        <div class="category-card cat-peri">
+            <img src="https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=600" alt="Perifericos">
+            <div class="category-card-info">
+                <h3>Periféricos</h3>
+            </div>
+        </div>
+        <div class="category-card cat-moni">
+            <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=800" alt="Monitores">
+            <div class="category-card-info">
+                <h3>Monitores</h3>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="section-header">
+        <div>
+            <h2>Productos Destacados</h2>
+        </div>
+    </div>
+
+    <div class="products-grid" id="products-container">
+        <div class="product-card" th:each="producto : ${productos}">
+            <div>
+                <div class="product-img-holder">
+                    <img th:if="${producto.imagenUrl != null and !#strings.isEmpty(producto.imagenUrl)}" th:src="${producto.imagenUrl}" alt="Hardware" style="width:100%; height:100%; object-fit:contain; padding:10px;"/>
+                    <span th:if="${producto.imagenUrl == null or #strings.isEmpty(producto.imagenUrl)}">📷 [Sin imagen]</span>
+                </div>
+                
+                <div class="product-brand" th:text="${producto.categoria != null ? producto.categoria.nombre : 'Sin Categoría'}">PROCESADORES</div>
+                <h3 class="product-title" th:text="${producto.nombre != null ? producto.nombre : 'Sin nombre'}">Nombre del Producto</h3>
+                <p class="product-desc" th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">Descripción técnica del componente...</p>
+            </div>
+            <div>
+                <div class="product-price-row">
+                    <span class="price" th:text="${producto.precio != null} ? 'S/ ' + ${#numbers.formatDecimal(producto.precio, 1, 2)} : 'S/ 0.00'">S/ 0.00</span>
+                    <span class="status-stock">
+                        <span class="material-symbols-outlined" style="font-size:12px;">fiber_manual_record</span>
+                        En Stock (<span th:text="${producto.stock != null ? producto.stock : 0}">0</span>)
+                    </span>
+                </div>
+                
+                <button class="btn btn-dark w-100 fw-bold" 
+                        th:data-id="${producto.idProducto}"
+                        th:data-nombre="${producto.nombre}"
+                        th:data-descripcion="${producto.descripcion}"
+                        th:data-precio="${producto.precio}"
+                        th:data-stock="${producto.stock}"
+                        th:data-imagen="${producto.imagenUrl}"
+                        onclick="agregarAlCarritoDesdeBoton(this)">
+                    <i class="bi bi-cart-plus"></i> Añadir al carrito
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2026 TechStore. Todos los derechos reservados.</p>
+        
+        <a href="/login" class="secret-admin-btn" title="Área Administrativa">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+        </a>
+    </div>
+</footer>
+
+<script src="/js/carrito.js"></script>
+
+</body>
+</html>

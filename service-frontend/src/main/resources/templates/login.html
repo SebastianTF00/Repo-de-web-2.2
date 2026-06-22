@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore | Acceso Restringido</title>
+    <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body class="login-body">
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            
+            <div class="login-header">
+                <span class="material-symbols-outlined login-icon">admin_panel_settings</span>
+                <h2>Acceso Administrativo</h2>
+                <p>Ingresa tus credenciales para continuar</p>
+            </div>
+
+            <form action="/login" method="POST" class="login-form">
+                
+                <div th:if="${error != null}" class="alert-error">
+                    <span class="material-symbols-outlined">error</span>
+                    <span th:text="${error}"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="correo">Correo Electrónico</label>
+                    <div class="input-icon-wrapper">
+                        <span class="material-symbols-outlined">mail</span>
+                        <input type="email" id="correo" name="correo" placeholder="admin@techstore.com" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="contrasenia">Contraseña</label>
+                    <div class="input-icon-wrapper">
+                        <span class="material-symbols-outlined">lock</span>
+                        <input type="password" id="contrasenia" name="contrasenia" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-login">Ingresar al Sistema</button>
+                
+                <a href="/" class="back-link">
+                    <span class="material-symbols-outlined">arrow_back</span> Volver a la Tienda
+                </a>
+            </form>
+            
+        </div>
+    </div>
+
+</body>
+</html>

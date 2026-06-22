@@ -1,0 +1,56 @@
+package com.cibertec.edu.service_usuarios.controller;
+
+import com.cibertec.edu.service_usuarios.model.Usuario;
+import com.cibertec.edu.service_usuarios.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "*") // Permite peticiones desde tu Frontend
+public class UsuarioController {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    // 1. Obtener la lista de usuarios
+    @GetMapping
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        return new ResponseEntity<>(usuarioRepository.findAll(), HttpStatus.OK);
+    }
+
+    // 2. Obtener un usuario por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable("id") Integer id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        
+        return usuario.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // 3. Guardar o Actualizar Usuario
+    @PostMapping
+    public ResponseEntity<Usuario> guardarUsuario(@RequestBody Usuario usuario) {
+        // Asignar rol por defecto si no se seleccionó ninguno
+        if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
+            usuario.setRol("CLIENTE");
+        }
+        Usuario nuevoUsuario = usuarioRepository.save(usuario);
+        return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
+    }
+
+    // 4. Eliminar Usuario
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable("id") Integer id) {
+        if (!usuarioRepository.existsById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        usuarioRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
