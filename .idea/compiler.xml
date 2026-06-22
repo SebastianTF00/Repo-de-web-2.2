@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="service-frontend" />
+        <module name="service-eureka" />
+        <module name="service-gateway" />
+      </profile>
+      <profile name="Annotation profile for service-productos" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="service-pedidos" />
+        <module name="service-usuarios" />
+        <module name="service-productos" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="service-eureka" options="-parameters" />
+      <module name="service-frontend" options="-parameters" />
+      <module name="service-gateway" options="-parameters" />
+      <module name="service-pedidos" options="-parameters" />
+      <module name="service-productos" options="-parameters" />
+      <module name="service-usuarios" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -47,10 +47,13 @@
 
                 <div class="form-group">
                     <label>Categoría</label>
-                    <select th:field="*{categoria.idCategoria}" required>
-                        <option th:each="cat : ${categorias}" 
-                                th:value="${cat.idCategoria}" 
-                                th:text="${cat.nombre}"></option>
+                    <select name="categoria.idCategoria" required>
+                        <option value="">Seleccione una categoría...</option>
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.idCategoria}"
+                                th:text="${cat.nombre}"
+                                th:selected="${producto.categoria != null and cat.idCategoria == producto.categoria.idCategoria}">
+                        </option>
                     </select>
                 </div>
 
