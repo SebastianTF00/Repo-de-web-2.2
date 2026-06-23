@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore</title>
+
+    <link rel="stylesheet" href="/css/tienda.css">
+</head>
+<body data-logeado="false">
+<header class="navbar">
+    <a href="/" class="logo">
+        TechStore
+    </a>
+    <nav>
+        <a href="/tienda">Tienda</a>
+        <a href="/nosotros">Nosotros</a>
+        <a href="/contacto">Contactos</a>
+    </nav>
+    <div class="header-search">
+        <input type="text" id="busqueda" placeholder="Buscar hardware...">
+    </div>
+    <div class="carrito-icono">
+        🛒
+        <span id="contadorCarrito">0</span>
+    </div>
+    <a href="/login" class="btn-login">
+        Iniciar Sesión
+    </a>
+</header>
+<div class="contenedor-principal">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2>Filtros</h2>
+
+        <!-- Categorías -->
+        <div class="filtro-grupo">
+
+            <h3>Categorías</h3>
+
+            <div id="categoriasContainer">
+
+                <label
+                        th:each="categoria : ${categorias}">
+
+                    <input
+                            type="checkbox"
+                            class="categoriaCheck"
+                            th:value="${categoria.idCategoria}">
+
+                    <span th:text="${categoria.nombre}"></span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- Precio -->
+        <div class="filtro-grupo">
+
+            <h3>Rango de Precio</h3>
+
+            <label>Precio Máximo</label>
+
+            <input
+                    type="range"
+                    id="precioRange"
+                    min="0"
+                    max="5000"
+                    value="5000">
+
+            <p id="precioActual">
+                Hasta S/. 5000
+            </p>
+
+        </div>
+
+        <!-- Disponibilidad -->
+        <div class="filtro-grupo">
+
+            <h3>Disponibilidad</h3>
+
+            <label>
+                <input type="checkbox" id="soloStock">
+                Solo productos con stock
+            </label>
+
+        </div>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="contenido">
+
+
+        <!-- Encabezado -->
+        <div class="encabezado-productos">
+
+         <span id="contadorProductos">
+            Mostrando <span th:text="${#lists.size(productos)}"></span> productos
+         </span>
+
+        </div>
+
+        <!-- Grid de productos -->
+        <!-- -------------------------------------------------------Cards dinámicas --------------------------------------------------------->
+        <div id="productosContainer" class="productos-grid">
+
+            <div
+                    class="card"
+                    th:each="producto : ${productos}"
+                    th:data-id="${producto.idProducto}"
+                    th:data-nombre="${producto.nombre}"
+                    th:data-precio="${producto.precio}"
+                    th:data-imagen="${producto.imagenUrl}"
+                    th:data-categoria="${producto.categoria.idCategoria}"
+                    th:data-stock="${producto.stock}">
+
+                <img
+                        th:src="${producto.imagenUrl}"
+                        th:alt="${producto.nombre}"
+                        onerror="this.src='https://via.placeholder.com/300x200?text=Sin+Imagen'">
+
+                <div class="card-contenido">
+                    <h3 th:text="${producto.nombre}"></h3>
+                    <div class="precio">
+                        S/. <span th:text="${producto.precio}"></span>
+                    </div>
+                    <div class="stock">
+                        Stock:
+                        <span th:text="${producto.stock}"></span>
+                    </div>
+
+                    <div class="botones">
+                        <button
+                                class="btn-detalle"
+                                th:data-id="${producto.idProducto}">
+                            Ver Detalle
+                        </button>
+
+                        <button
+                                class="btn-agregar"
+                                th:data-id="${producto.idProducto}">
+                            Agregar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Paginación -->
+        <div id="paginacion">
+
+        </div>
+
+    </main>
+
+</div>
+
+<footer class="footer">
+
+    <div class="footer-col">
+        <h2>TechStore</h2>
+        <p>
+            Expertos en hardware de alto rendimiento.
+            Brindamos la mejor tecnología para gamers,
+            creadores y profesionales.
+        </p>
+    </div>
+
+    <div class="footer-col">
+        <h3>TIENDA</h3>
+        <p>Procesadores</p>
+        <p>Tarjetas Gráficas</p>
+        <p>Periféricos</p>
+    </div>
+
+    <div class="footer-col">
+        <h3>SOPORTE</h3>
+        <p>Servicio al Cliente</p>
+        <p>Métodos de Pago</p>
+        <p>Garantía y Devoluciones</p>
+    </div>
+
+    <div class="footer-col">
+        <h3>SUSCRÍBETE</h3>
+
+        <input
+                type="email"
+                placeholder="tu@email.com"
+                class="footer-input">
+
+        <button class="footer-btn">
+            Unirse a la Elite
+        </button>
+    </div>
+
+</footer>
+
+<script src="/js/tienda.js"></script>
+
+</body>
+</html>
