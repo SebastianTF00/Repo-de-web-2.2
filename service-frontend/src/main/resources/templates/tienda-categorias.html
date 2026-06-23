@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechStore | Nuestras Categorías</title>
-    <link rel="stylesheet" href="/css/estilos.css?v=1.2">
+    <link rel="stylesheet" href="/css/estilos.css?v=1.3">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 <body style="background-color: #0b0f17; color: white;">
@@ -26,17 +26,17 @@
 
         <p style="color: #64748b; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.6rem; text-transform: uppercase;">Categorías</p>
         <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; font-size: 0.9rem; color: #cbd5e1;">
-            <label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" name="categoria-filtro" value="Procesadores" onchange="filtrarPorCheckboxes()"> Procesadores
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Procesadores" onchange="filtrarTodo()"> Procesadores
             </label>
-            <label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" name="categoria-filtro" value="Tarjetas de Video" onchange="filtrarPorCheckboxes()"> Tarjetas de Video
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Tarjetas de Video" onchange="filtrarTodo()"> Tarjetas de Video
             </label>
-            <label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" name="categoria-filtro" value="Periféricos" onchange="filtrarPorCheckboxes()"> Periféricos
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Periféricos" onchange="filtrarTodo()"> Periféricos
             </label>
-            <label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" name="categoria-filtro" value="Placa Madre" onchange="filtrarPorCheckboxes()"> Placa Madre
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Placa Madre" onchange="filtrarTodo()"> Placa Madre
             </label>
         </div>
 
@@ -60,18 +60,24 @@
             <span id="txt-contador" th:text="'Mostrando ' + ${categorias.size()} + ' líneas de componentes'">Mostrando 0 líneas</span>
         </div>
 
-        <div style="margin-bottom: 2rem;">
-            <h2 id="titulo-seccion" style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem;">Explora por Componentes</h2>
-            <p id="subtitulo-seccion" style="color: #64748b; font-size: 0.9rem; margin: 0;">Selecciona una línea de hardware para armar o repotenciar tu PC ideal.</p>
+        <div style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 900px;">
+            <div>
+                <h2 id="titulo-seccion" style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem;">Explora por Componentes</h2>
+                <p id="subtitulo-seccion" style="color: #64748b; font-size: 0.9rem; margin: 0;">Selecciona una línea de hardware para armar o repotenciar tu PC ideal.</p>
+            </div>
+            <button id="btn-volver-categorias" onclick="restaurarVistaCategorias()"
+                    style="display: none; background: transparent; border: 1px solid #3a86ff; color: #3a86ff; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; align-items: center; gap: 8px; font-size: 0.85rem; transition: all 0.2s;">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_back</span> Volver a Categorías
+            </button>
         </div>
 
         <div id="contenedor-dinamico" class="catalog-grid">
-            <div th:each="cat : ${categorias}">
-                <div class="category-card-user" th:onclick="cargarProductos([[${cat.idCategoria}]], [[${cat.nombre}]])">
+            <div th:each="cat : ${categorias}" class="category-block-item" th:data-categoria="${cat.nombre}">
+                <div class="category-card-user" th:onclick="cargarProductos([[${cat.idCategoria}]], [[${cat.nombre}]])" style="cursor: pointer;">
                     <span class="material-symbols-outlined category-icon">developer_board</span>
                     <h3 th:text="${cat.nombre}">Nombre de Categoría</h3>
                     <p th:text="${cat.descripcion}">Descripción técnica...</p>
-                    <div class="btn-explore" style="cursor: pointer;">
+                    <div class="btn-explore">
                         Ver Componentes <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_forward</span>
                     </div>
                 </div>
@@ -80,35 +86,74 @@
     </main>
 
     <script>
+        let esVistaProductos = false;
+        let copiaHtmlCategorias = "";
+
+        // Función global para aplanar y quitar tildes/espacios con seguridad
+        const limpiarTexto = (texto) => {
+            if (!texto) return "";
+            return texto.toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .trim();
+        };
+
+        window.onload = function() {
+            // Guardamos la estructura HTML limpia del contenedor
+            copiaHtmlCategorias = document.getElementById('contenedor-dinamico').innerHTML;
+
+            // Interceptamos la redirección automática del Index
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoriaParaFiltrar = urlParams.get('filtrar');
+
+            if (categoriaParaFiltrar) {
+                const checkboxes = document.querySelectorAll('input[name="categoria-filtro"]');
+                checkboxes.forEach(cb => {
+                    if (limpiarTexto(cb.value) === limpiarTexto(categoriaParaFiltrar)) {
+                        cb.checked = true;
+
+                        const tarjetasCat = document.querySelectorAll('.category-block-item');
+                        tarjetasCat.forEach(t => {
+                            const h3 = t.querySelector('h3');
+                            if (h3 && limpiarTexto(h3.innerText).includes(limpiarTexto(categoriaParaFiltrar))) {
+                                t.querySelector('.category-card-user').click();
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
         function cargarProductos(idCategoria, nombreCategoria) {
-            // 1. Hacemos la petición asíncrona a la ruta que creamos en el controlador
             fetch('/api/public/productos/categoria/' + idCategoria)
                 .then(response => response.json())
                 .then(productos => {
+                    esVistaProductos = true;
 
-                    // 2. Actualizamos los textos de la interfaz
+                    document.getElementById('btn-volver-categorias').style.display = 'inline-flex';
                     document.getElementById('titulo-seccion').innerText = nombreCategoria;
                     document.getElementById('subtitulo-seccion').innerText = "Componentes de hardware disponibles en esta sección.";
-                    document.getElementById('txt-contador').innerText = "Mostrando " + productos.length + " productos encontrados";
+
+                    // Marcamos solo la categoría activa en el menú izquierdo
+                    const checkboxes = document.querySelectorAll('input[name="categoria-filtro"]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = (limpiarTexto(cb.value) === limpiarTexto(nombreCategoria));
+                    });
 
                     const contenedor = document.getElementById('contenedor-dinamico');
+                    contenedor.className = "products-grid-catalog";
 
-                    // Si no hay productos, mostramos un mensaje vacío amigable
                     if (productos.length === 0) {
+                        document.getElementById('txt-contador').innerText = "Mostrando 0 productos encontrados";
                         contenedor.innerHTML = `<p style="color:#64748b; grid-column: 1/-1; text-align:center; padding: 3rem;">No hay productos registrados en esta categoría actualmente.</p>`;
                         return;
                     }
 
-                    // 3. Cambiamos la clase de la grilla para que use el estilo de la tienda que pusimos en tu CSS externo
-                    contenedor.className = "products-grid-catalog";
-
-                    // 4. Limpiamos las categorías y pintamos las tarjetas de los productos reales
                     contenedor.innerHTML = "";
                     productos.forEach(prod => {
                         const imgUrl = prod.imagenUrl ? prod.imagenUrl : '/images/default-hardware.png';
-
                         contenedor.innerHTML += `
-                            <div class="product-card-item">
+                            <div class="product-card-item" data-catname="${limpiarTexto(nombreCategoria)}">
                                 <div class="product-img-wrapper">
                                     <img src="${imgUrl}" alt="${prod.nombre}">
                                 </div>
@@ -122,99 +167,102 @@
                             </div>
                         `;
                     });
+
+                    filtrarTodo();
                 })
-                .catch(err => {
-                    console.error("Error cargando productos asíncronos:", err);
-                });
+                .catch(err => console.error("Error en fetch:", err));
         }
+
+        function restaurarVistaCategorias() {
+            esVistaProductos = false;
+
+            document.getElementById('btn-volver-categorias').style.display = 'none';
+            document.getElementById('titulo-seccion').innerText = "Explora por Componentes";
+            document.getElementById('subtitulo-seccion').innerText = "Selecciona una línea de hardware para armar o repotenciar tu PC ideal.";
+
+            document.querySelectorAll('input[name="categoria-filtro"]').forEach(cb => cb.checked = false);
+            document.getElementById('check-stock').checked = false;
+            document.getElementById('range-precio').value = 6000;
+            document.getElementById('val-precio').innerText = "6000";
+
+            const contenedor = document.getElementById('contenedor-dinamico');
+            contenedor.className = "catalog-grid";
+            contenedor.innerHTML = copiaHtmlCategorias;
+
+            filtrarTodo();
+        }
+
         function filtrarTodo() {
-    // 1. Capturamos los valores de todos los filtros del sidebar
-    const checkboxesCat = document.querySelectorAll('input[name="categoria-filtro"]:checked');
-    const categoriasMarcadas = Array.from(checkboxesCat).map(cb => cb.value.toLowerCase().trim());
+            const checkboxesCat = document.querySelectorAll('input[name="categoria-filtro"]:checked');
+            const categoriasMarcadas = Array.from(checkboxesCat).map(cb => limpiarTexto(cb.value));
 
-    const precioMaximo = parseFloat(document.getElementById('range-precio').value);
-    const soloConStock = document.getElementById('check-stock').checked;
+            const precioMaximo = parseFloat(document.getElementById('range-precio').value);
+            const soloConStock = document.getElementById('check-stock').checked;
 
-    // 2. Obtenemos todas las tarjetas (pueden ser categorías o productos)
-    const tarjetas = document.querySelectorAll('#contenedor-dinamico > div');
+            let contadorVisibles = 0;
 
-    let contadorVisibles = 0;
+            if (esVistaProductos) {
+                // --- FILTRADO INTERNO DE COMPONENTES ---
+                const productos = document.querySelectorAll('.product-card-item');
 
-    tarjetas.forEach(tarjeta => {
-        // Por defecto asumimos que la tarjeta pasará el filtro
-        let pasaCategoria = true;
-        let pasaPrecio = true;
-        let pasaStock = true;
+                productos.forEach(producto => {
+                    let pasaCategoria = true;
+                    let pasaPrecio = true;
+                    let pasaStock = true;
 
-        // --- FILTRO 1: CATEGORÍAS ---
-        const tituloEl = tarjeta.querySelector('h3, .product-card-title');
-        if (tituloEl && categoriasMarcadas.length > 0) {
-            const nombreTexto = tituloEl.innerText.toLowerCase().trim();
-            pasaCategoria = categoriasMarcadas.some(cat => nombreTexto.includes(cat));
-        }
+                    const catProducto = producto.getAttribute('data-catname');
+                    if (catProducto && categoriasMarcadas.length > 0) {
+                        pasaCategoria = categoriasMarcadas.includes(catProducto);
+                    }
 
-        // --- FILTRO 2: PRECIO (Solo aplica si es tarjeta de producto) ---
-        const precioEl = tarjeta.querySelector('.product-card-price');
-        if (precioEl) {
-            // Limpiamos el texto "S/. 2500.00" para quedarnos solo con el número
-            const precioTexto = precioEl.innerText.replace(/[^\d.]/g, '');
-            const precioProducto = parseFloat(precioTexto);
-            if (!isNaN(precioProducto)) {
-                pasaPrecio = precioProducto <= precioMaximo;
+                    const precioEl = producto.querySelector('.product-card-price');
+                    if (precioEl) {
+                        const precioProducto = parseFloat(precioEl.innerText.replace(/[^\d.]/g, ''));
+                        if (!isNaN(precioProducto)) pasaPrecio = precioProducto <= precioMaximo;
+                    }
+
+                    const stockEl = producto.querySelector('.product-card-stock');
+                    if (stockEl && soloConStock) {
+                        const stockProducto = parseInt(stockEl.innerText.replace(/[^\d]/g, ''));
+                        if (!isNaN(stockProducto)) pasaStock = stockProducto > 0;
+                    }
+
+                    if (pasaCategoria && pasaPrecio && pasaStock) {
+                        producto.style.display = 'flex';
+                        contadorVisibles++;
+                    } else {
+                        producto.style.display = 'none';
+                    }
+                });
+
+            } else {
+                // --- FILTRADO DE LAS 3 CAJAS GRANDES ---
+                const bloquesCategoria = document.querySelectorAll('#contenedor-dinamico .category-block-item');
+
+                bloquesCategoria.forEach(bloque => {
+                    let pasaCategoria = true;
+                    const tituloH3 = bloque.querySelector('h3');
+
+                    if (tituloH3 && categoriasMarcadas.length > 0) {
+                        const nombreTexto = limpiarTexto(tituloH3.innerText);
+                        pasaCategoria = categoriasMarcadas.some(cat => nombreTexto.includes(cat));
+                    }
+
+                    if (pasaCategoria) {
+                        bloque.style.display = 'flex';
+                        contadorVisibles++;
+                    } else {
+                        bloque.style.display = 'none';
+                    }
+                });
+            }
+
+            const txtContador = document.getElementById('txt-contador');
+            if (txtContador) {
+                const sufijo = esVistaProductos ? " productos encontrados" : " líneas de componentes";
+                txtContador.innerText = "Mostrando " + contadorVisibles + sufijo;
             }
         }
-
-        // --- FILTRO 3: DISPONIBILIDAD (Solo aplica si es tarjeta de producto) ---
-        const stockEl = tarjeta.querySelector('.product-card-stock');
-        if (stockEl && soloConStock) {
-            const stockTexto = stockEl.innerText.replace(/[^\d]/g, ''); // Extrae el número del stock
-            const stockProducto = parseInt(stockTexto);
-            if (!isNaN(stockProducto)) {
-                pasaStock = stockProducto > 0;
-            }
-        }
-
-        // 3. Evaluamos si cumple con las TRES condiciones al mismo tiempo
-        if (pasaCategoria && pasaPrecio && pasaStock) {
-            tarjeta.style.display = 'flex';
-            contadorVisibles++;
-        } else {
-            tarjeta.style.display = 'none';
-        }
-    });
-
-    // 4. Actualizamos el contador superior
-    actualizarContadorVisible(contadorVisibles);
-}
-
-function actualizarContadorVisible(cantidad) {
-    const txtContador = document.getElementById('txt-contador');
-    if (txtContador) {
-        const esProducto = document.getElementById('titulo-seccion').innerText !== "Explora por Componentes";
-        const sufijo = esProducto ? " productos encontrados" : " líneas de componentes";
-        txtContador.innerText = "Mostrando " + cantidad + sufijo;
-    }
-}
-        // Se ejecuta automáticamente al cargar la página de categorías
-window.onload = function() {
-    // 1. Obtenemos los parámetros que vienen en la URL (ej: ?filtrar=procesadores)
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoriaParaFiltrar = urlParams.get('filtrar');
-
-    if (categoriaParaFiltrar) {
-        // 2. Buscamos el checkbox que tenga exactamente ese valor (en minúsculas)
-        const checkboxes = document.querySelectorAll('input[name="categoria-filtro"]');
-
-        checkboxes.forEach(cb => {
-            if (cb.value.toLowerCase().trim() === categoriaParaFiltrar.toLowerCase().trim()) {
-                cb.checked = true; // Marcamos el checkbox automáticamente
-            }
-        });
-
-        // 3. Ejecutamos la función unificada para actualizar la vista de inmediato
-        filtrarTodo();
-    }
-};
     </script>
 </div>
 
