@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore | Nuestras Categorías</title>
+    <link rel="stylesheet" href="/css/estilos.css?v=1.3">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body style="background-color: #0b0f17; color: white;">
+
+<header style="padding: 1.5rem 4%; background: #131a26; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="font-size: 1.5rem; font-weight: 800; color: #fff;">TechStore</h1>
+    <nav style="display: flex; gap: 2rem;">
+        <a href="/" style="color: #64748b; text-decoration: none;">Inicio</a>
+        <a href="/tienda/categorias" style="color: #fff; font-weight: bold; text-decoration: none;">Tienda</a>
+        <a href="#" style="color: #64748b; text-decoration: none;">Nosotros</a>
+        <a href="#" style="color: #64748b; text-decoration: none;">Contactos</a>
+    </nav>
+</header>
+
+<div class="store-layout-container">
+
+    <aside class="sidebar-filters">
+        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: #fff;">Filtros</h3>
+
+        <p style="color: #64748b; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.6rem; text-transform: uppercase;">Categorías</p>
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; font-size: 0.9rem; color: #cbd5e1;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Procesadores" onchange="filtrarTodo()"> Procesadores
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Tarjetas de Video" onchange="filtrarTodo()"> Tarjetas de Video
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Periféricos" onchange="filtrarTodo()"> Periféricos
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" name="categoria-filtro" value="Placa Madre" onchange="filtrarTodo()"> Placa Madre
+            </label>
+        </div>
+
+        <p style="color: #64748b; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.6rem; text-transform: uppercase;">Rango de Precio</p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin: 0 0 0.5rem 0;">Precio Máximo</p>
+        <input type="range" id="range-precio" style="width: 100%; margin-bottom: 0.5rem;"
+               min="0" max="6000" value="6000"
+               oninput="document.getElementById('val-precio').innerText = this.value"
+               onchange="filtrarTodo()">
+        <span style="font-size: 0.85rem; color: #3a86ff; font-weight: 600;">Hasta S/. <span id="val-precio">6000</span></span>
+
+        <p style="color: #64748b; font-size: 0.85rem; font-weight: bold; margin: 2rem 0 0.6rem 0; text-transform: uppercase;">Disponibilidad</p>
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #cbd5e1; cursor: pointer;">
+            <input type="checkbox" id="check-stock" onchange="filtrarTodo()"> Solo productos con stock
+        </label>
+    </aside>
+
+    <main class="products-display-area">
+
+        <div class="results-counter-bar">
+            <span id="txt-contador" th:text="'Mostrando ' + ${categorias.size()} + ' líneas de componentes'">Mostrando 0 líneas</span>
+        </div>
+
+        <div style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 900px;">
+            <div>
+                <h2 id="titulo-seccion" style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem;">Explora por Componentes</h2>
+                <p id="subtitulo-seccion" style="color: #64748b; font-size: 0.9rem; margin: 0;">Selecciona una línea de hardware para armar o repotenciar tu PC ideal.</p>
+            </div>
+            <button id="btn-volver-categorias" onclick="restaurarVistaCategorias()"
+                    style="display: none; background: transparent; border: 1px solid #3a86ff; color: #3a86ff; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; align-items: center; gap: 8px; font-size: 0.85rem; transition: all 0.2s;">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_back</span> Volver a Categorías
+            </button>
+        </div>
+
+        <div id="contenedor-dinamico" class="catalog-grid">
+            <div th:each="cat : ${categorias}" class="category-block-item" th:data-categoria="${cat.nombre}">
+                <div class="category-card-user" th:onclick="cargarProductos([[${cat.idCategoria}]], [[${cat.nombre}]])" style="cursor: pointer;">
+                    <span class="material-symbols-outlined category-icon">developer_board</span>
+                    <h3 th:text="${cat.nombre}">Nombre de Categoría</h3>
+                    <p th:text="${cat.descripcion}">Descripción técnica...</p>
+                    <div class="btn-explore">
+                        Ver Componentes <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_forward</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let esVistaProductos = false;
+        let copiaHtmlCategorias = "";
+
+        // Función global para aplanar y quitar tildes/espacios con seguridad
+        const limpiarTexto = (texto) => {
+            if (!texto) return "";
+            return texto.toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .trim();
+        };
+
+        window.onload = function() {
+            // Guardamos la estructura HTML limpia del contenedor
+            copiaHtmlCategorias = document.getElementById('contenedor-dinamico').innerHTML;
+
+            // Interceptamos la redirección automática del Index
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoriaParaFiltrar = urlParams.get('filtrar');
+
+            if (categoriaParaFiltrar) {
+                const checkboxes = document.querySelectorAll('input[name="categoria-filtro"]');
+                checkboxes.forEach(cb => {
+                    if (limpiarTexto(cb.value) === limpiarTexto(categoriaParaFiltrar)) {
+                        cb.checked = true;
+
+                        const tarjetasCat = document.querySelectorAll('.category-block-item');
+                        tarjetasCat.forEach(t => {
+                            const h3 = t.querySelector('h3');
+                            if (h3 && limpiarTexto(h3.innerText).includes(limpiarTexto(categoriaParaFiltrar))) {
+                                t.querySelector('.category-card-user').click();
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        function cargarProductos(idCategoria, nombreCategoria) {
+            fetch('/api/public/productos/categoria/' + idCategoria)
+                .then(response => response.json())
+                .then(productos => {
+                    esVistaProductos = true;
+
+                    document.getElementById('btn-volver-categorias').style.display = 'inline-flex';
+                    document.getElementById('titulo-seccion').innerText = nombreCategoria;
+                    document.getElementById('subtitulo-seccion').innerText = "Componentes de hardware disponibles en esta sección.";
+
+                    // Marcamos solo la categoría activa en el menú izquierdo
+                    const checkboxes = document.querySelectorAll('input[name="categoria-filtro"]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = (limpiarTexto(cb.value) === limpiarTexto(nombreCategoria));
+                    });
+
+                    const contenedor = document.getElementById('contenedor-dinamico');
+                    contenedor.className = "products-grid-catalog";
+
+                    if (productos.length === 0) {
+                        document.getElementById('txt-contador').innerText = "Mostrando 0 productos encontrados";
+                        contenedor.innerHTML = `<p style="color:#64748b; grid-column: 1/-1; text-align:center; padding: 3rem;">No hay productos registrados en esta categoría actualmente.</p>`;
+                        return;
+                    }
+
+                    contenedor.innerHTML = "";
+                    productos.forEach(prod => {
+                        const imgUrl = prod.imagenUrl ? prod.imagenUrl : '/images/default-hardware.png';
+                        contenedor.innerHTML += `
+                            <div class="product-card-item" data-catname="${limpiarTexto(nombreCategoria)}">
+                                <div class="product-img-wrapper">
+                                    <img src="${imgUrl}" alt="${prod.nombre}">
+                                </div>
+                                <h4 class="product-card-title">${prod.nombre}</h4>
+                                <p class="product-card-price">S/. ${prod.precio.toFixed(2)}</p>
+                                <p class="product-card-stock">Stock: ${prod.stock}</p>
+                                <div class="product-card-actions">
+                                    <a href="#" class="btn-card-secondary">Ver Detalle</a>
+                                    <button class="btn-card-primary">Agregar</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    filtrarTodo();
+                })
+                .catch(err => console.error("Error en fetch:", err));
+        }
+
+        function restaurarVistaCategorias() {
+            esVistaProductos = false;
+
+            document.getElementById('btn-volver-categorias').style.display = 'none';
+            document.getElementById('titulo-seccion').innerText = "Explora por Componentes";
+            document.getElementById('subtitulo-seccion').innerText = "Selecciona una línea de hardware para armar o repotenciar tu PC ideal.";
+
+            document.querySelectorAll('input[name="categoria-filtro"]').forEach(cb => cb.checked = false);
+            document.getElementById('check-stock').checked = false;
+            document.getElementById('range-precio').value = 6000;
+            document.getElementById('val-precio').innerText = "6000";
+
+            const contenedor = document.getElementById('contenedor-dinamico');
+            contenedor.className = "catalog-grid";
+            contenedor.innerHTML = copiaHtmlCategorias;
+
+            filtrarTodo();
+        }
+
+        function filtrarTodo() {
+            const checkboxesCat = document.querySelectorAll('input[name="categoria-filtro"]:checked');
+            const categoriasMarcadas = Array.from(checkboxesCat).map(cb => limpiarTexto(cb.value));
+
+            const precioMaximo = parseFloat(document.getElementById('range-precio').value);
+            const soloConStock = document.getElementById('check-stock').checked;
+
+            let contadorVisibles = 0;
+
+            if (esVistaProductos) {
+                // --- FILTRADO INTERNO DE COMPONENTES ---
+                const productos = document.querySelectorAll('.product-card-item');
+
+                productos.forEach(producto => {
+                    let pasaCategoria = true;
+                    let pasaPrecio = true;
+                    let pasaStock = true;
+
+                    const catProducto = producto.getAttribute('data-catname');
+                    if (catProducto && categoriasMarcadas.length > 0) {
+                        pasaCategoria = categoriasMarcadas.includes(catProducto);
+                    }
+
+                    const precioEl = producto.querySelector('.product-card-price');
+                    if (precioEl) {
+                        const precioProducto = parseFloat(precioEl.innerText.replace(/[^\d.]/g, ''));
+                        if (!isNaN(precioProducto)) pasaPrecio = precioProducto <= precioMaximo;
+                    }
+
+                    const stockEl = producto.querySelector('.product-card-stock');
+                    if (stockEl && soloConStock) {
+                        const stockProducto = parseInt(stockEl.innerText.replace(/[^\d]/g, ''));
+                        if (!isNaN(stockProducto)) pasaStock = stockProducto > 0;
+                    }
+
+                    if (pasaCategoria && pasaPrecio && pasaStock) {
+                        producto.style.display = 'flex';
+                        contadorVisibles++;
+                    } else {
+                        producto.style.display = 'none';
+                    }
+                });
+
+            } else {
+                // --- FILTRADO DE LAS 3 CAJAS GRANDES ---
+                const bloquesCategoria = document.querySelectorAll('#contenedor-dinamico .category-block-item');
+
+                bloquesCategoria.forEach(bloque => {
+                    let pasaCategoria = true;
+                    const tituloH3 = bloque.querySelector('h3');
+
+                    if (tituloH3 && categoriasMarcadas.length > 0) {
+                        const nombreTexto = limpiarTexto(tituloH3.innerText);
+                        pasaCategoria = categoriasMarcadas.some(cat => nombreTexto.includes(cat));
+                    }
+
+                    if (pasaCategoria) {
+                        bloque.style.display = 'flex';
+                        contadorVisibles++;
+                    } else {
+                        bloque.style.display = 'none';
+                    }
+                });
+            }
+
+            const txtContador = document.getElementById('txt-contador');
+            if (txtContador) {
+                const sufijo = esVistaProductos ? " productos encontrados" : " líneas de componentes";
+                txtContador.innerText = "Mostrando " + contadorVisibles + sufijo;
+            }
+        }
+    </script>
+</div>
+
+</body>
+</html>
