@@ -63,4 +63,30 @@ public class ProductoWebController {
             return new ArrayList<>();
         }
     }
+    // 5. Configurador de PC
+    @GetMapping("/configurador")
+    public String mostrarConfigurador(Model model) {
+        try {
+            // Asumiendo que sabes los IDs de las categorías según el script SQL:
+            // 1: Procesadores, 2: Tarjetas de Video, 3: Placas Madre
+
+            Object[] procesadores = restTemplate.getForObject("http://localhost:8080/api/productos/categoria/1", Object[].class);
+            model.addAttribute("procesadores", Arrays.asList(procesadores != null ? procesadores : new Object[0]));
+
+            Object[] placas = restTemplate.getForObject("http://localhost:8080/api/productos/categoria/3", Object[].class);
+            model.addAttribute("placas", Arrays.asList(placas != null ? placas : new Object[0]));
+
+            Object[] gpus = restTemplate.getForObject("http://localhost:8080/api/productos/categoria/2", Object[].class);
+            model.addAttribute("gpus", Arrays.asList(gpus != null ? gpus : new Object[0]));
+
+        } catch (Exception e) {
+            System.out.println("=== ERROR EN EL CONFIGURADOR ===");
+            e.printStackTrace();
+            model.addAttribute("procesadores", new ArrayList<>());
+            model.addAttribute("placas", new ArrayList<>());
+            model.addAttribute("gpus", new ArrayList<>());
+        }
+        return "configurador";
+    }
+
 }

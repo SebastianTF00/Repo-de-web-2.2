@@ -106,7 +106,7 @@ function renderizarCarrito() {
                                  alt="${item.nombre}"
                                  class="cart-img"
                                  style="width: 80px; height: 80px; object-fit: contain; background: #fff; border-radius: 8px; padding: 5px;"
-                                 onerror="this.src='/images/default-hardware.png'">
+                                 onerror="this.onerror=null; this.src='/images/default-hardware.png'">
 
                             <div>
                                 <h6 class="fw-bold mb-1 cart-product-title">${item.nombre}</h6>
@@ -198,11 +198,38 @@ function vaciarCarrito() {
     const carrito = obtenerCarrito();
     if (carrito.length === 0) return;
 
-    if (confirm("¿Seguro que deseas vaciar el carrito?")) {
+    // 1. Crear Modal de Confirmación Estético
+    const overlayConfirm = document.createElement('div');
+    overlayConfirm.id = 'techstore-confirm-modal';
+    Object.assign(overlayConfirm.style, {
+        position: 'fixed', top: '0', left: '0', width: '100%', height: '100%',
+        backgroundColor: 'rgba(11, 15, 23, 0.85)', backdropFilter: 'blur(5px)',
+        display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: '10000'
+    });
+
+    overlayConfirm.innerHTML = `
+        <div style="background: #131a26; border: 1px solid #1e293b; border-radius: 12px; padding: 2rem; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+            <span class="material-symbols-outlined" style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;">delete_forever</span>
+            <h3 style="color: #fff; margin-bottom: 0.5rem; font-weight: 700;">¿Vaciar Carrito?</h3>
+            <p style="color: #94a3b8; margin-bottom: 1.5rem; font-size: 0.95rem;">Esta acción eliminará todos los componentes de tu carrito.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button id="btn-cancel-empty" style="background: transparent; border: 1px solid #334155; color: #cbd5e1; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; width: 50%;">No, mantener</button>
+                <button id="btn-confirm-empty" style="background: #ef4444; border: none; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; width: 50%;">Sí, vaciar</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlayConfirm);
+
+    // Lógica de botones
+    document.getElementById('btn-cancel-empty').onclick = () => overlayConfirm.remove();
+    document.getElementById('btn-confirm-empty').onclick = () => {
         localStorage.removeItem(STORAGE_KEY);
         renderizarCarrito();
         actualizarContadorCarrito();
-    }
+        overlayConfirm.remove();
+        mostrarNotificacionPremium("Carrito vaciado correctamente.");
+    };
 }
 
 function calcularTotal(carrito) {

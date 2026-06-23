@@ -141,9 +141,14 @@
                             Ver Detalle
                         </button>
 
-                        <button
-                                class="btn-agregar"
-                                th:data-id="${producto.idProducto}">
+                        <button class="btn-agregar"
+                                th:data-id="${producto.idProducto}"
+                                th:data-nombre="${producto.nombre}"
+                                th:data-precio="${producto.precio}"
+                                th:data-stock="${producto.stock}"
+                                th:data-imagen="${producto.imagenUrl}"
+                                th:data-descripcion="${producto.descripcion}"
+                                onclick="agregarAlCarritoDesdeBoton(this)">
                             Agregar
                         </button>
                     </div>

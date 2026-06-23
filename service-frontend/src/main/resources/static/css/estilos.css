@@ -1083,3 +1083,86 @@ footer {
 .btn-create-admin:hover {
     background: #7eb0ff; /* Un tono un poquito más oscuro al pasar el mouse */
 }
+/* ===================================================
+   CONFIGURADOR DE PC (PC BUILDER)
+   =================================================== */
+.builder-layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 2rem auto;
+    gap: 2rem;
+    padding: 0 4%;
+}
+.builder-steps {
+    flex-grow: 1;
+}
+.builder-summary {
+    width: 350px;
+    background: #131a26;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+}
+.step-container {
+    background: #131a26;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.step-number {
+    background: #3a86ff;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 10px;
+}
+.component-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+.component-item {
+    background: #0b0f17;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.component-item:hover, .component-item.selected {
+    border-color: #3a86ff;
+    box-shadow: 0 0 15px rgba(58, 134, 255, 0.2);
+}
+.component-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    background: #fff; /* Fondo blanco para que los componentes destaquen */
+    border-radius: 6px;
+    padding: 5px;
+}
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
