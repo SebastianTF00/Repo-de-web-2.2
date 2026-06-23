@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+//IMPORTS PARA BYSCRYPT
+import org.mindrot.jbcrypt.BCrypt;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*") // Permite peticiones desde tu Frontend
@@ -36,10 +40,14 @@ public class UsuarioController {
     // 3. Guardar o Actualizar Usuario
     @PostMapping
     public ResponseEntity<Usuario> guardarUsuario(@RequestBody Usuario usuario) {
-        // Asignar rol por defecto si no se seleccionó ninguno
         if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
             usuario.setRol("CLIENTE");
         }
+        
+        // ¡LA MAGIA DE BCRYPT!: Encriptamos la contraseña antes de guardarla en MySQL
+        String hash = BCrypt.hashpw(usuario.getContrasenia(), BCrypt.gensalt());
+        usuario.setContrasenia(hash);
+        
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
@@ -60,5 +68,24 @@ public class UsuarioController {
         if (!usuarioRepository.existsById(id)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         usuarioDetalles.setIdUsuario(id);
         return new ResponseEntity<>(usuarioRepository.save(usuarioDetalles), HttpStatus.OK);
+    }
+
+    // 6. NUEVO: Validar Login Real
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credenciales) {
+        String correo = credenciales.get("correo");
+        String contrasenia = credenciales.get("contrasenia");
+
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
+        
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            // Comparamos la contraseña escrita en el HTML con la encriptada en MySQL
+            if (BCrypt.checkpw(contrasenia, usuario.getContrasenia())) {
+                return new ResponseEntity<>(usuario, HttpStatus.OK);
+            }
+        }
+        // Si no existe el correo o la clave no coincide, mandamos error 401
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
     }
 }
