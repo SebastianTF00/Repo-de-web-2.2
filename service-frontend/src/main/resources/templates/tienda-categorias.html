@@ -11,11 +11,16 @@
 
 <header style="padding: 1.5rem 4%; background: #131a26; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
     <h1 style="font-size: 1.5rem; font-weight: 800; color: #fff;">TechStore</h1>
-    <nav style="display: flex; gap: 2rem;">
+    <nav style="display: flex; gap: 2rem; align-items: center;">
         <a href="/" style="color: #64748b; text-decoration: none;">Inicio</a>
         <a href="/tienda/categorias" style="color: #fff; font-weight: bold; text-decoration: none;">Tienda</a>
         <a href="#" style="color: #64748b; text-decoration: none;">Nosotros</a>
         <a href="#" style="color: #64748b; text-decoration: none;">Contactos</a>
+
+        <a href="/carrito" class="cart-icon" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 5px; margin-left: 1rem; border-left: 1px solid #1e293b; padding-left: 1rem;" title="Ver mi carrito">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span class="cart-count" id="cart-count" style="background: #3a86ff; padding: 2px 8px; border-radius: 50%; font-size: 0.8rem; font-weight: bold;">0</span>
+        </a>
     </nav>
 </header>
 
@@ -152,17 +157,31 @@
                     contenedor.innerHTML = "";
                     productos.forEach(prod => {
                         const imgUrl = prod.imagenUrl ? prod.imagenUrl : '/images/default-hardware.png';
+                        // Validamos los datos para evitar nulos
+                        const nombreSafe = prod.nombre || 'Producto';
+                        const descSafe = prod.descripcion || '';
+
                         contenedor.innerHTML += `
                             <div class="product-card-item" data-catname="${limpiarTexto(nombreCategoria)}">
                                 <div class="product-img-wrapper">
-                                    <img src="${imgUrl}" alt="${prod.nombre}">
+                                    <img src="${imgUrl}" alt="${nombreSafe}">
                                 </div>
-                                <h4 class="product-card-title">${prod.nombre}</h4>
+                                <h4 class="product-card-title">${nombreSafe}</h4>
                                 <p class="product-card-price">S/. ${prod.precio.toFixed(2)}</p>
                                 <p class="product-card-stock">Stock: ${prod.stock}</p>
                                 <div class="product-card-actions">
                                     <a href="#" class="btn-card-secondary">Ver Detalle</a>
-                                    <button class="btn-card-primary">Agregar</button>
+
+                                    <button class="btn-card-primary"
+                                            data-id="${prod.idProducto}"
+                                            data-nombre="${nombreSafe}"
+                                            data-descripcion="${descSafe}"
+                                            data-precio="${prod.precio}"
+                                            data-stock="${prod.stock}"
+                                            data-imagen="${imgUrl}"
+                                            onclick="agregarAlCarritoDesdeBoton(this)">
+                                        Agregar
+                                    </button>
                                 </div>
                             </div>
                         `;
@@ -265,6 +284,7 @@
         }
     </script>
 </div>
+<script src="/js/carrito.js?v=premium"></script>
 
 </body>
 </html>

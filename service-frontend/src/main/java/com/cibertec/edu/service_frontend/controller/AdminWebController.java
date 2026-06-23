@@ -139,18 +139,29 @@ public class AdminWebController {
         return "editar-producto"; // Asegúrate de que el nombre del archivo sea este
     }
 
-
-
     // ==========================================
     // 3. CATEGORÍAS
     // ==========================================
     @GetMapping("/categorias")
     public String mostrarCategorias(Model model) {
         try {
+            // 1. Traemos las categorías reales
             Categoria[] response = restTemplate.getForObject(CATEGORIAS_URL, Categoria[].class);
             model.addAttribute("categorias", Arrays.asList(response != null ? response : new Categoria[0]));
+
+            // 2. Traemos también los productos para que la plantilla no reciba un null al evaluar 'productos.size()'
+            try {
+                Producto[] prodResponse = restTemplate.getForObject(PRODUCTOS_URL, Producto[].class);
+                model.addAttribute("productos", Arrays.asList(prodResponse != null ? prodResponse : new Producto[0]));
+            } catch (Exception ex) {
+                // Si falla productos, enviamos una lista vacía para que size() devuelva 0 y no explote
+                model.addAttribute("productos", new ArrayList<>());
+            }
+
         } catch (Exception e) {
             model.addAttribute("categorias", new ArrayList<>());
+            model.addAttribute("productos", new ArrayList<>());
+            System.out.println("Error en panel admin categorías: " + e.getMessage());
         }
         return "categorias";
     }

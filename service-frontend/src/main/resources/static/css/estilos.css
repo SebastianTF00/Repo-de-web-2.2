@@ -964,3 +964,122 @@ footer {
 
 .btn-card-primary:hover { background: #2563eb; }
 .btn-card-secondary:hover { background: #1e293b; color: #fff; }
+/* ===================================================
+   LAYOUT ADMINISTRATIVO (PRODUCTOS, CATEGORÍAS, ETC.)
+   =================================================== */
+
+.admin-body-layout {
+    background-color: #0b0f17;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+
+.admin-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 260px;
+    background: #131a26;
+    border-right: 1px solid #1e293b;
+    padding: 2rem 1.5rem;
+    flex-shrink: 0;
+}
+
+.admin-content {
+    flex-grow: 1;
+    padding: 2.5rem;
+    background: #0b0f17;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #64748b;
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s;
+}
+
+.menu-link.active, .menu-link:hover {
+    color: #fff;
+    background: #1e293b;
+}
+
+.metric-card {
+    background: #131a26;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    min-width: 200px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #131a26;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+
+.admin-table th {
+    background: #1e293b;
+    color: #94a3b8;
+    text-align: left;
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-table td {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    color: #cbd5e1;
+    font-size: 0.95rem;
+}
+
+.btn-action {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit { color: #3a86ff; }
+.btn-delete { color: #ef4444; }
+.btn-action:hover { background: rgba(255,255,255,0.05); }
+
+.btn-create-admin {
+    background: #a2c2ff; /* El celeste claro de tu panel */
+    color: #0b0f17 !important; /* Texto oscuro para que contraste idéntico al de productos */
+    text-decoration: none !important;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 700; /* Negrita pro */
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-create-admin:hover {
+    background: #7eb0ff; /* Un tono un poquito más oscuro al pasar el mouse */
+}
