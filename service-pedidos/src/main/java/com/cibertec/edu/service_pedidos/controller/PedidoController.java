@@ -34,6 +34,14 @@ public class PedidoController {
         return new ResponseEntity<>(pedidoRepository.findAll(), HttpStatus.OK);
     }
 
+    // Agrega esto debajo de listarTodos()
+    @GetMapping("/{id}")
+    public ResponseEntity<Pedido> obtenerPorId(@PathVariable("id") Integer id) {
+        return pedidoRepository.findById(id)
+                .map(pedido -> new ResponseEntity<>(pedido, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     // 2. CREAR UN PEDIDO (El Mega POST)
     @PostMapping
     public ResponseEntity<?> crearPedido(@RequestBody Pedido pedido) {
@@ -73,7 +81,9 @@ public class PedidoController {
 
             // PASO 3: Setear totales y estado por defecto
             pedido.setTotal(totalCalculado);
-            pedido.setEstado("PENDIENTE");
+            if (pedido.getEstado() == null || pedido.getEstado().isEmpty()) {
+                pedido.setEstado("PENDIENTE");
+}
 
             // PASO 4: Guardar en la base de datos (Guarda el Pedido y sus Detalles automáticamente)
             Pedido nuevoPedido = pedidoRepository.save(pedido);
@@ -85,5 +95,22 @@ public class PedidoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al crear el pedido. Verifica que el usuario y los productos existan. Detalle: " + e.getMessage());
         }
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Pedido> actualizar(@PathVariable("id") Integer id, @RequestBody Pedido pedidoDetalles) {
+        if (!pedidoRepository.existsById(id)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        pedidoDetalles.setIdPedido(id);
+        return new ResponseEntity<>(pedidoRepository.save(pedidoDetalles), HttpStatus.OK);
+    }
+
+    // ... dentro de PedidoController.java ...
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable("id") Integer id) {
+        if (!pedidoRepository.existsById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        pedidoRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

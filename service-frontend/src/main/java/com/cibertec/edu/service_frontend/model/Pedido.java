@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Pedido {
     private Integer idPedido;
-    private Long idUsuario;
+    private Long idUsuario; // <--- ESTO ES LO QUE EL BACKEND ENVÍA
     private LocalDateTime fechaPedido;
     private BigDecimal total;
     private String estado;

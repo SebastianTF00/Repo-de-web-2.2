@@ -34,17 +34,20 @@
         <p style="color:#94a3b8; font-size:0.9rem;">Actualiza el estado logístico o datos del pedido.</p>
 
         <div class="form-container">
-            <form action="/pedido/guardar" method="POST" th:object="${pedido}">
-                
+                <form action="/pedido/guardar" method="POST" th:object="${pedido}">
                 <input type="hidden" th:field="*{idPedido}" />
+                
+                <input type="hidden" name="detalles[0].idProducto" value="1" />
+                <input type="hidden" name="detalles[0].cantidad" value="1" />
 
                 <div class="form-group">
-                    <label>Cliente</label>
-                    <select th:field="*{usuario.idUsuario}" required>
-                        <option value="">Seleccione un cliente...</option>
-                        <option th:each="user : ${usuarios}" 
-                                th:value="${user.idUsuario}" 
-                                th:text="${user.nombre + ' (' + user.correo + ')'}"></option>
+                    <label>Cliente (ID Usuario)</label>
+                    <select th:field="*{idUsuario}" class="form-control" required>
+                        <option value="">-- Seleccione un usuario --</option>
+                        <option th:each="u : ${usuarios}" 
+                                th:value="${u.idUsuario}" 
+                                th:text="${u.nombre}">
+                        </option>
                     </select>
                 </div>
 
@@ -56,18 +59,19 @@
                 <div class="form-group">
                     <label>Estado del Pedido</label>
                     <select th:field="*{estado}" required>
-                        <option value="PENDIENTE">Pendiente de Pago</option>
-                        <option value="PAGADO">Pagado (Procesando)</option>
-                        <option value="ENVIADO">Enviado (En ruta)</option>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="PAGADO">Pagado</option>
+                        <option value="ENVIADO">Enviado</option>
                         <option value="CANCELADO">Cancelado</option>
                     </select>
                 </div>
 
                 <div style="margin-top: 2rem;">
-                    <button type="submit" class="btn-submit"><span class="material-symbols-outlined">save</span> Guardar Cambios</button>
+                    <button type="submit" class="btn-submit">
+                        <span class="material-symbols-outlined">save</span> Guardar Cambios
+                    </button>
                     <a href="/pedidos" class="btn-cancel">Cancelar</a>
                 </div>
-
             </form>
         </div>
     </main>

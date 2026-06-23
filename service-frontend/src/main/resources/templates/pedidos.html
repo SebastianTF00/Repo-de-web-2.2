@@ -37,10 +37,6 @@
         </ul>
         </div>
 
-        <div>
-            <li class="btn"><a href="/inicio"><span class="material-symbols-outlined">inicio</span> Regresar a inicio</a></li>
-        </div>
-
         <div style="display:flex; align-items:center; gap:10px;">
             <span class="material-symbols-outlined" style="font-size:2.5rem; color:#a2d2ff;">account_circle</span>
             <div>
@@ -76,31 +72,25 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="ped : ${pedidos}">
-                    <td style="font-weight:bold; color:#a2d2ff;" th:text="'ORD-' + ${ped.idPedido}">ID</td>
-                    <td th:text="${ped.usuario != null ? ped.usuario.nombre : 'Cliente Eliminado'}">Cliente</td>
-                    <td th:text="${#temporals.format(ped.fechaPedido, 'dd/MM/yyyy HH:mm')}">Fecha</td>
-                    <td style="font-weight:bold;" th:text="'S/ ' + ${#numbers.formatDecimal(ped.total, 1, 2)}">Total</td>
-                    <td>
-                        <span th:class="'status-badge ' + 
-                            (${ped.estado == 'PENDIENTE'} ? 'status-pendiente' : 
-                            (${ped.estado == 'PAGADO'} ? 'status-pagado' : 
-                            (${ped.estado == 'ENVIADO'} ? 'status-enviado' : 'status-cancelado')))"
-                            th:text="${ped.estado}">ESTADO
-                        </span>
-                    </td>
-                    <td>
-                        <div class="action-btns">
-                            <a th:href="@{/pedido/editar/{id}(id=${ped.idPedido})}" style="color: inherit; text-decoration: none;" title="Gestionar Pedido">
-                                <span class="material-symbols-outlined">edit</span>
-                            </a>
-                            <a th:href="@{/pedido/eliminar/{id}(id=${ped.idPedido})}" style="color: inherit; text-decoration: none;" title="Eliminar"
-                               onclick="return confirm('¿Seguro que deseas eliminar este pedido? Esto borrará permanentemente la orden del historial.');">
-                                <span class="material-symbols-outlined" style="color:#ef4444;">delete</span>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
+                    <tr th:each="ped : ${pedidos}">
+                        <td th:text="${ped.idPedido}">ID</td>
+                        
+                        <td th:text="${usuariosMap.containsKey(ped.idUsuario) ? usuariosMap[ped.idUsuario] : 'Sin ID'}">Cliente</td>
+                        
+                        <td th:text="${#temporals.format(ped.fechaPedido, 'dd/MM/yyyy HH:mm')}">Fecha</td>
+                        
+                        <td th:text="'S/ ' + ${ped.total}">Total</td>
+                        
+                        <td>
+                            <span th:text="${ped.estado}"
+                                th:classappend="'status-badge status-' + ${ped.estado.toLowerCase()}"></span>
+                        </td>
+                        
+                        <td>
+                            <a th:href="@{'/pedido/editar/' + ${ped.idPedido}}" class="btn btn-primary">Editar</a>
+                            <a th:href="@{'/pedido/eliminar/' + ${ped.idPedido}}" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

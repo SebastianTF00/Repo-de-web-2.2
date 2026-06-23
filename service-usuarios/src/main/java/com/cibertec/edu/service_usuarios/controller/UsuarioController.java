@@ -30,7 +30,7 @@ public class UsuarioController {
         Optional<Usuario> usuario = usuarioRepository.findById(id);
         
         return usuario.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // 3. Guardar o Actualizar Usuario
@@ -52,5 +52,13 @@ public class UsuarioController {
         }
         usuarioRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // 5. Actualizar usuario
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> actualizar(@PathVariable("id") Integer id, @RequestBody Usuario usuarioDetalles) {
+        if (!usuarioRepository.existsById(id)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        usuarioDetalles.setIdUsuario(id);
+        return new ResponseEntity<>(usuarioRepository.save(usuarioDetalles), HttpStatus.OK);
     }
 }

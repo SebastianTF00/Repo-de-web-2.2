@@ -57,4 +57,16 @@ public class ProductoController {
         productoRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    // 6. Actualizar un producto existente
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> actualizar(@PathVariable("id") Integer id, @RequestBody Producto productoDetalles) {
+        if (!productoRepository.existsById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        // Aseguramos que el ID del objeto sea el mismo de la URL
+        productoDetalles.setIdProducto(id); 
+        Producto productoActualizado = productoRepository.save(productoDetalles);
+        return new ResponseEntity<>(productoActualizado, HttpStatus.OK);
+    }
 }

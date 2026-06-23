@@ -110,7 +110,7 @@
                     <td style="font-weight:600;" th:text="'S/. ' + ${#numbers.formatDecimal(prod.precio, 1, 2)}">S/. 0.00</td>
                     <td>
                                 <span th:class="${prod.stock < 5} ? 'badge-low' : 'badge-stock'"
-                                      th:text="${prod.stock < 5} ? 'BAJO STOCK (' + ${prod.stock} + ')' : 'EN STOCK (' + ${prod.stock} + ')'">
+                                    th:text="${prod.stock < 5} ? 'BAJO STOCK (' + ${prod.stock} + ')' : 'EN STOCK (' + ${prod.stock} + ')'">
                                 </span>
                     </td>
                     <td>

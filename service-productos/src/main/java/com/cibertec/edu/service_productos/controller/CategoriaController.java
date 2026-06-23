@@ -46,4 +46,15 @@ public class CategoriaController {
         categoriaRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    // 5. Actualizar una categoría existente
+    @PutMapping("/{id}")
+    public ResponseEntity<Categoria> actualizar(@PathVariable("id") Integer id, @RequestBody Categoria categoriaDetalles) {
+        if (!categoriaRepository.existsById(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        categoriaDetalles.setIdCategoria(id);
+        Categoria categoriaActualizada = categoriaRepository.save(categoriaDetalles);
+        return new ResponseEntity<>(categoriaActualizada, HttpStatus.OK);
+    }
 }
