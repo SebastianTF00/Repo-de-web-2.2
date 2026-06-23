@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpClientErrorException;
+
 @Controller
 public class AdminWebController {
 
@@ -34,8 +37,30 @@ public class AdminWebController {
 
     // ¡NUEVO! Recibe el formulario de login y te deja pasar
     @PostMapping("/login")
-    public String procesarLogin() {
-        return "redirect:/inventario";
+    public String procesarLogin(@RequestParam("correo") String correo, 
+                                @RequestParam("contrasenia") String contrasenia, 
+                                Model model) {
+        try {
+            // Empaquetamos los datos del formulario
+            Map<String, String> credenciales = new HashMap<>();
+            credenciales.put("correo", correo);
+            credenciales.put("contrasenia", contrasenia);
+
+            // Enviamos al backend para que valide con BCrypt
+            restTemplate.postForEntity(USUARIOS_URL + "/login", credenciales, Usuario.class);
+            
+            // Si no hay error, el login fue un éxito
+            return "redirect:/inventario";
+            
+        } catch (HttpClientErrorException e) {
+            // Si el backend rechaza las credenciales
+            model.addAttribute("error", "Correo o contraseña incorrectos.");
+            return "login";
+        } catch (Exception e) {
+            // Si el servidor está apagado
+            model.addAttribute("error", "Error de conexión con el servidor.");
+            return "login";
+        }
     }
 
     // ==========================================
