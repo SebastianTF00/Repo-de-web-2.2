@@ -4,11 +4,9 @@ import com.cibertec.edu.service_frontend.model.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+
 import java.util.Map;
 import java.util.*;
 
@@ -172,5 +170,34 @@ public class ProductoWebController {
 
         // Al terminar de procesar, refresca el panel de inventario automáticamente
         return "redirect:/inventario";
+    }
+    @GetMapping("/tienda/categorias")
+    public String vistaCategoriasCliente(Model model) {
+        try {
+            // Traemos las categorías reales y actualizadas desde el API Gateway (Puerto 8080)
+            Object[] categoriasArray = restTemplate.getForObject("http://localhost:8080/api/categorias", Object[].class);
+            List<Object> categorias = Arrays.asList(categoriasArray != null ? categoriasArray : new Object[0]);
+
+            // Se las pasamos a la nueva plantilla del cliente
+            model.addAttribute("categorias", categorias);
+        } catch (Exception e) {
+            System.out.println("=== ERROR AL CARGAR CATEGORÍAS PÚBLICAS ===");
+            e.printStackTrace();
+            model.addAttribute("categorias", new ArrayList<>());
+        }
+        return "tienda-categorias"; // Este será el nuevo HTML para el usuario
+    }
+    @GetMapping("/api/public/productos/categoria/{id}")
+    @ResponseBody // IMPORTANTE: Esto hace que devuelva JSON directamente
+    public List<Object> obtenerProductosPorCategoriaAsync(@PathVariable("id") Integer id) {
+        try {
+            // Le pedimos al Gateway los productos de esa categoría
+            Object[] productosArray = restTemplate.getForObject("http://localhost:8080/api/productos/categoria/" + id, Object[].class);
+            return Arrays.asList(productosArray != null ? productosArray : new Object[0]);
+        } catch (Exception e) {
+            System.out.println("=== ERROR EN FETCH ASÍNCRONO DE PRODUCTOS ===");
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 }

@@ -48,36 +48,51 @@
             <h2>Categorías Destacadas</h2>
             <p>Explora nuestro catálogo especializado por componentes.</p>
         </div>
-        <a href="#" class="view-all">Ver todas las categorías <span class="material-symbols-outlined">chevron_right</span></a>
+        <a href="/tienda/categorias" class="view-all">Ver todas las categorías <span class="material-symbols-outlined">chevron_right</span></a>
     </div>
 
     <div class="categories-grid">
-        <div class="category-card cat-gpu">
+
+        <div class="category-card cat-gpu"
+             onclick="window.location.href='/tienda/categorias?filtrar=tarjetas de video'"
+             style="cursor: pointer;">
             <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=600" alt="GPUs">
             <div class="category-card-info">
                 <h3>Tarjetas de Video</h3>
                 <p>Serie RTX 40 y RX 7000 para gaming extremo.</p>
             </div>
         </div>
-        <div class="category-card cat-cpu">
+
+        <div class="category-card cat-cpu"
+             onclick="window.location.href='/tienda/categorias?filtrar=procesadores'"
+             style="cursor: pointer;">
             <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600" alt="CPUs">
             <div class="category-card-info">
                 <h3>Procesadores</h3>
                 <p>El núcleo de tu poder.</p>
             </div>
         </div>
-        <div class="category-card cat-peri">
+
+        <div class="category-card cat-peri"
+             onclick="window.location.href='/tienda/categorias?filtrar=perifericos'"
+             style="cursor: pointer;">
             <img src="https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=600" alt="Perifericos">
             <div class="category-card-info">
                 <h3>Periféricos</h3>
+                <p>Mouses, teclados y accesorios.</p>
             </div>
         </div>
-        <div class="category-card cat-moni">
+
+        <div class="category-card cat-moni"
+             onclick="window.location.href='/tienda/categorias?filtrar=placa madre'"
+             style="cursor: pointer;">
             <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=800" alt="Monitores">
             <div class="category-card-info">
                 <h3>Monitores</h3>
+                <p>Pantallas de alta tasa de refresco.</p>
             </div>
         </div>
+
     </div>
 </section>
 

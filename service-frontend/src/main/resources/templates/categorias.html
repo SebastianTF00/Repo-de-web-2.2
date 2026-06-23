@@ -9,81 +9,48 @@
 </head>
 <body>
 
-<div class="admin-container">
-    <aside class="sidebar">
-        <div>
-            <div class="sidebar-brand">
-                <h1>Admin Panel</h1>
-                <p>Gestión de Tienda</p>
-            </div>
-        <ul class="menu-list mt-4">
-            <li class="menu-item"><a href="/inventario"><span class="material-symbols-outlined">inventory_2</span> Productos</a></li>
-            <li class="menu-item"><a href="/categorias"><span class="material-symbols-outlined">category</span> Categorías</a></li>
-            <li class="menu-item"><a href="/usuarios"><span class="material-symbols-outlined">group</span> Usuarios</a></li>
-            <li class="menu-item"><a href="/pedidos"><span class="material-symbols-outlined">shopping_bag</span> Pedidos</a></li>
-            
-            <li class="menu-item" style="margin-top: 2rem; border-top: 1px solid #1e293b; padding-top: 1rem;">
-                <a href="/" style="color: #a2d2ff; font-weight: bold;">
-                    <span class="material-symbols-outlined">storefront</span> Ver Tienda
-                </a>
-            </li>
-        </ul>
+<div class="store-layout-container">
+
+    <aside class="sidebar-filters">
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">Filtros</h3>
+
+        <p style="color: #64748b; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem;">Categorías</p>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">
+            <label><input type="checkbox"> Procesadores</label>
+            <label><input type="checkbox"> Tarjetas de Video</label>
+            <label><input type="checkbox"> Periféricos</label>
+            <label><input type="checkbox"> Placa Madre</label>
         </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <span class="material-symbols-outlined" style="font-size:2.5rem; color:#a2d2ff;">account_circle</span>
-            <div>
-                <h4 style="font-size:0.9rem;">Fabrizio</h4>
-                <p style="font-size:0.75rem; color:#64748b;">Administrador</p>
-            </div>
-        </div>
+
+        <p style="color: #64748b; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem;">Rango de Precio</p>
+        <input type="range" style="width: 100%; margin-bottom: 0.5rem;">
+        <span style="font-size: 0.85rem; color: #3a86ff;">Hasta S/. 5000</span>
     </aside>
 
-    <main class="main-content">
-        <div class="top-bar">
-            <div style="flex-grow:0.4;"></div> <a href="/categoria/nueva" class="btn-new">
-                <span class="material-symbols-outlined">add</span> Nueva Categoría
-            </a>
+    <main class="products-display-area">
+
+        <div class="results-counter-bar">
+            <span th:text="'Mostrando ' + ${productos.size()} + ' productos'">Mostrando 0 productos</span>
         </div>
 
-        <div style="margin-bottom: 2rem;">
-            <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:0.3rem;">Gestión de Categorías</h2>
-            <p style="color:#94a3b8; font-size:0.9rem;">Administra las líneas de componentes de tu hardware.</p>
+        <div class="products-grid-catalog">
+            <div class="product-card-item" th:each="prod : ${productos}">
+
+                <div class="product-img-wrapper">
+                    <img th:src="${prod.imagenUrl != null ? prod.imagenUrl : '/images/default-hardware.png'}" alt="Componente">
+                </div>
+
+                <h4 class="product-card-title" th:text="${prod.nombre}">Nombre del Producto</h4>
+                <p class="product-card-price" th:text="'S/. ' + ${prod.precio}">S/. 0.00</p>
+                <p class="product-card-stock" th:text="'Stock: ' + ${prod.stock}">Stock: 0</p>
+
+                <div class="product-card-actions">
+                    <a href="#" class="btn-card-secondary">Ver Detalle</a>
+                    <button class="btn-card-primary">Agregar</button>
+                </div>
+
+            </div>
         </div>
 
-        <div class="table-container">
-            <table class="admin-table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre de Categoría</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="cat : ${categorias}">
-                    <td style="font-weight:bold; color:#a2d2ff;" th:text="'CAT-' + ${cat.idCategoria}">ID</td>
-                    <td>
-                        <div class="badge-cat" style="display:inline-block;" th:text="${cat.nombre}">Nombre</div>
-                    </td>
-                    <td th:text="${cat.descripcion}">Descripción</td>
-                    <td>
-                        <div class="action-btns">
-                            <a th:href="@{/categoria/editar/{id}(id=${cat.idCategoria})}" style="color: inherit; text-decoration: none;" title="Editar">
-                                <span class="material-symbols-outlined">edit</span>
-                            </a>
-                            <a th:href="@{/categoria/eliminar/{id}(id=${cat.idCategoria})}" style="color: inherit; text-decoration: none;" title="Eliminar"
-                               onclick="return confirm('¿Seguro que deseas eliminar esta categoría? Si tiene productos asociados podrían quedar sin categoría.');">
-                                <span class="material-symbols-outlined" style="color:#ef4444;">delete</span>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
     </main>
 </div>
-
-</body>
-</html>
