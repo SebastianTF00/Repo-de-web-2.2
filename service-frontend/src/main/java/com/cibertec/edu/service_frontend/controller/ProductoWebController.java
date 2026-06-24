@@ -55,7 +55,7 @@ public class ProductoWebController {
     @ResponseBody
     public List<Object> obtenerProductosPorCategoriaAsync(@PathVariable("id") Integer id) {
         try {
-            Object[] productosArray = restTemplate.getForObject("http://localhost:8080/api/productos/categoria/" + id, Object[].class);
+            Object[] productosArray = restTemplate.getForObject("https://gateway-tu-url.onrender.com/api/productos" + id, Object[].class);
             return Arrays.asList(productosArray != null ? productosArray : new Object[0]);
         } catch (Exception e) {
             System.out.println("=== ERROR EN FETCH ASÍNCRONO DE PRODUCTOS ===");
