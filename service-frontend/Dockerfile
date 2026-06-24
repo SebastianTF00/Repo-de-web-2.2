@@ -9,4 +9,6 @@ FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# CAMBIO: Usamos "sh -c" para que Java pueda leer variables de entorno (como JAVA_OPTS)
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
