@@ -25,7 +25,7 @@ public class ProductoWebController {
         List<Producto> productos = Arrays.asList(productosArray != null ? productosArray : new Producto[0]);
 
         model.addAttribute("productos", productos);
-        return "inicio";
+        return "index";
     }
 
     // 2. Carrito de compras público
