@@ -1,0 +1,1 @@
+const API_URL = "https://tu-gateway-e6up.onrender.com";
