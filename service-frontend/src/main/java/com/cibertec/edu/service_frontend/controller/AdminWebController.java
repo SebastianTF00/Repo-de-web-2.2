@@ -24,6 +24,7 @@ import java.util.Map;
 public class AdminWebController {
 
 
+
     // ==========================================
     // 1. LOGIN
     // ==========================================
@@ -44,10 +45,11 @@ public class AdminWebController {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String PRODUCTOS_URL = "http://localhost:8080/api/productos";
-    private final String CATEGORIAS_URL = "http://localhost:8080/api/categorias";
-    private final String USUARIOS_URL = "http://localhost:8080/api/usuarios";
-    private final String PEDIDOS_URL = "http://localhost:8080/api/pedidos";
+
+    private final String PRODUCTOS_URL = "http://service-gateway/api/productos";
+    private final String CATEGORIAS_URL = "http://service-gateway/api/categorias";
+    private final String USUARIOS_URL = "http://service-gateway/api/usuarios";
+    private final String PEDIDOS_URL = "http://service-gateway/api/pedidos";
     
     // --- LISTAR BLINDADO CONTRA VALORES NULOS ---
     @GetMapping("/inventario")

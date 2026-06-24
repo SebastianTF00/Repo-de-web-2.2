@@ -15,8 +15,8 @@ import java.util.List;
 public class TiendaController {
     @Autowired
     private RestTemplate restTemplate;
-    private final String PRODUCTOS_URL = "http://localhost:8080/api/productos";
-    private final String CATEGORIAS_URL = "http://localhost:8080/api/categorias";
+    private final String PRODUCTOS_URL = "http://service-gateway/api/productos";
+    private final String CATEGORIAS_URL = "http://service-gateway/api/categorias";
 
     @GetMapping("/tienda")
     public String mostrarTienda(Model model) {

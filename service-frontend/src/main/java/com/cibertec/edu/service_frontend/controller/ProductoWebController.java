@@ -2,6 +2,8 @@ package com.cibertec.edu.service_frontend.controller;
 
 import com.cibertec.edu.service_frontend.model.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +18,18 @@ public class ProductoWebController {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String GATEWAY_URL = "http://localhost:8080/api/productos";
+    private final String GATEWAY_URL = "http://service-gateway/api/productos";
+    // Cambia esto en todos tus controladores:
+    private final String PRODUCTOS_URL = "http://service-gateway/api/productos";
+    private final String CATEGORIAS_URL = "http://service-gateway/api/categorias";
+    private final String USUARIOS_URL = "http://service-gateway/api/usuarios";
+    private final String PEDIDOS_URL = "http://service-gateway/api/pedidos";
 
+    @Bean
+    @LoadBalanced
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
     // 1. Catálogo principal de la tienda (Inicio)
     @GetMapping("/")
     public String listarProductos(Model model) {
@@ -55,7 +67,7 @@ public class ProductoWebController {
     @ResponseBody
     public List<Object> obtenerProductosPorCategoriaAsync(@PathVariable("id") Integer id) {
         try {
-            Object[] productosArray = restTemplate.getForObject("https://gateway-tu-url.onrender.com/api/productos" + id, Object[].class);
+            Object[] productosArray = restTemplate.getForObject("http://service-gateway/api/productos/categoria/" + id, Object[].class);
             return Arrays.asList(productosArray != null ? productosArray : new Object[0]);
         } catch (Exception e) {
             System.out.println("=== ERROR EN FETCH ASÍNCRONO DE PRODUCTOS ===");
