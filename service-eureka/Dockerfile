@@ -1,14 +1,12 @@
-# Usar una imagen oficial de Java 21
-FROM eclipse-temurin:21-jdk-jammy
-
-# Directorio de trabajo
+# 1. Usar Maven para construir el proyecto
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copiar el archivo jar generado (asegúrate de que el nombre coincida)
-COPY target/*.jar app.jar
-
-# Exponer el puerto
+# 2. Usar Java para ejecutar el jar resultante
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Comando para arrancar
 ENTRYPOINT ["java", "-jar", "app.jar"]
