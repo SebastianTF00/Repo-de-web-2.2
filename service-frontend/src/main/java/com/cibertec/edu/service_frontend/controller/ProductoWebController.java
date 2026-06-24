@@ -4,6 +4,7 @@ import com.cibertec.edu.service_frontend.model.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +26,13 @@ public class ProductoWebController {
     private final String USUARIOS_URL = "http://service-gateway/api/usuarios";
     private final String PEDIDOS_URL = "http://service-gateway/api/pedidos";
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    @Configuration
+    public class RestTemplateConfig {
+        @Bean
+        @LoadBalanced
+        public RestTemplate restTemplate() {
+            return new RestTemplate();
+        }
     }
     // 1. Catálogo principal de la tienda (Inicio)
     @GetMapping("/")
